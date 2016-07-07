@@ -17,6 +17,9 @@ class Photo:
         self.samePhotos = 0
         self.picFormats = ['.jpg','.JPG','.jpeg','.JPEG','.png','.PNG']
 
+    def getSize(self,filename):
+        return os.stat(filename).st_size
+
     def getYMD(self, filename):
         """
         Get year, month, day, hour, minute, second of the image
@@ -25,6 +28,7 @@ class Photo:
         """
         file = open(filename)
         r,e = os.path.split(filename)
+        e = os.path.splitext(e)[1]
         if e in self.picFormats:
             md5 = hashlib.md5(open(filename).read()).hexdigest()
             if(md5 not in self.md5List):
@@ -32,6 +36,8 @@ class Photo:
             else:
                 print '!!Find the same files!!'
                 self.samePhotos += 1
+                # delete the same image
+                os.remove(filename)
                 return None,None,None,None,None,None
         # tags is a dictionary stores image's exif information
         tags = exifread.process_file(file)
